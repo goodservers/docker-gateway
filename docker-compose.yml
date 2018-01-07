@@ -3,7 +3,7 @@ version: '2'
 services:
   nginx:
     restart: always
-    image: nginx:latest
+    image: nginx:1.13.8
     container_name: nginx
     ports:
       - "80:80"
@@ -16,7 +16,7 @@ services:
       - "./log/:/var/log/nginx/"
   nginx-gen:
     restart: always
-    image: jwilder/docker-gen
+    image: jwilder/docker-gen:0.7.3
     container_name: nginx-gen
     depends_on:
       - nginx
@@ -29,7 +29,7 @@ services:
     command: ["/usr/local/bin/docker-gen -notify-sighup nginx -watch -wait 5s:90s /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf"]
   nginx-letsencrypt:
     restart: always
-    image: jrcs/letsencrypt-nginx-proxy-companion:latest
+    image: jrcs/letsencrypt-nginx-proxy-companion:v1.7
     container_name: nginx-letsencrypt
     depends_on:
       - nginx
@@ -44,7 +44,7 @@ services:
       - "./settings/certs:/etc/nginx/certs:rw"
   health-checker:
     restart: always
-    image: goodservers/docker-doctor:latest
+    image: goodservers/docker-doctor:0.1.1
     container_name: docker-doctor
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
