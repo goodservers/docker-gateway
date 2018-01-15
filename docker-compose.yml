@@ -1,5 +1,9 @@
 version: '2'
 
+volumes:
+  dg-nginx-config: {}
+  dg-nginx-public: {}
+
 services:
   nginx:
     restart: always
@@ -9,11 +13,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - "/etc/nginx/conf.d"
-      - "./settings/vhost.d:/etc/nginx/vhost.d"
-      - "/usr/share/nginx/html"
-      - "./settings/certs:/etc/nginx/certs:ro"
-      - "./log/:/var/log/nginx/"
+      - dg-nginx-config:/etc/nginx/conf.d
+      - dg-nginx-public:/usr/share/nginx/html
+      - ./log/:/var/log/nginx/
+      - ./settings/certs:/etc/nginx/certs:ro
+      - ./settings/vhost.d:/etc/nginx/vhost.d
   nginx-gen:
     restart: always
     image: jwilder/docker-gen:0.7.3
@@ -21,12 +25,12 @@ services:
     depends_on:
       - nginx
     volumes:
-      - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "./settings/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro"
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./settings/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl:ro
     volumes_from:
       - nginx
     entrypoint: /bin/sh -c
-    command: ["/usr/local/bin/docker-gen -notify-sighup nginx -watch -wait 5s:90s /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf"]
+    command: ["/usr/local/bin/docker-gen -notify-sighup nginx -watch -wait 5s:30s /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf"]
   nginx-letsencrypt:
     restart: always
     image: jrcs/letsencrypt-nginx-proxy-companion:v1.7
@@ -40,8 +44,8 @@ services:
     volumes_from:
       - nginx
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./settings/certs:/etc/nginx/certs:rw"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./settings/certs:/etc/nginx/certs:rw
   health-checker:
     restart: always
     image: goodservers/docker-doctor:latest
