@@ -7,7 +7,7 @@ volumes:
 services:
   nginx:
     restart: always
-    image: fholzer/nginx-brotli:v1.14.1
+    image: fholzer/nginx-brotli:v1.16.0
     container_name: nginx
     ports:
       - "80:80"
@@ -36,7 +36,7 @@ services:
       ]
   nginx-letsencrypt:
     restart: always
-    image: jrcs/letsencrypt-nginx-proxy-companion:v1.9.1
+    image: jrcs/letsencrypt-nginx-proxy-companion:v1.12
     container_name: nginx-letsencrypt
     depends_on:
       - nginx
