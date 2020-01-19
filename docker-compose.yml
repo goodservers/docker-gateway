@@ -51,7 +51,7 @@ services:
       - ./settings/certs:/etc/nginx/certs:rw
   health-checker:
     restart: always
-    image: goodservers/docker-doctor:0.4.0
+    image: goodservers/docker-doctor:0.4.1
     container_name: docker-doctor
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
